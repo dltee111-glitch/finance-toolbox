@@ -33,8 +33,19 @@ def loan_calculator():
     rate = st.number_input("연 금리 (%)", min_value=0.1, max_value=20.0, value=5.0, step=0.1)
     period = st.number_input("대출 기간 (개월)", min_value=1, max_value=360, value=12)
     method = st.selectbox("상환 방식", ["원리금 균등 상환", "원금 균등 상환"])
+    
     if st.button("계산 실행"):
-        st.write("대출 상환 스케줄 계산 로직입니다.")
+        if method == "원리금 균등 상환":
+            monthly_rate = (rate / 100) / 12
+            if monthly_rate == 0:
+                monthly_payment = principal / period
+            else:
+                monthly_payment = principal * (monthly_rate * (1 + monthly_rate) ** period) / ((1 + monthly_rate) ** period - 1)
+            
+            st.metric("월 예상 상환액", f"{int(monthly_payment):,} 원")
+            st.metric("총 상환 금액", f"{int(monthly_payment * period):,} 원")
+        else:
+            st.info("원금 균등 상환은 준비 중입니다.")
 
 # 2. 마이너스 통장 계산기
 def minus_account_calculator():
