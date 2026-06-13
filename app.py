@@ -4,7 +4,20 @@ from datetime import date
 # 1. 페이지 설정
 st.set_page_config(page_title="Karis 금융 계산기 포털", layout="centered")
 
-# 2. 사이드바 메뉴 개선
+# 2. 사이드바 메뉴 개선 (글자 크기 및 줄 간격 스타일 적용)
+st.sidebar.markdown(
+    """
+    <style>
+    [data-testid="stSidebar"] {
+        font-size: 24px !important;
+        line-height: 2.5 !important;
+    }
+    .css-164nlkn { font-size: 20px !important; }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
 st.sidebar.title("💰 Karis 금융 계산기 포털")
 st.sidebar.markdown("---")
 menu = st.sidebar.radio(
@@ -16,7 +29,6 @@ menu = st.sidebar.radio(
 
 def loan_calculator():
     st.header("🏠 대출 이자 계산기")
-    # 탭을 사용하여 대출 유형 분리
     tab1, tab2, tab3 = st.tabs(["주택담보대출", "전세자금대출", "신용/마이너스"])
 
     with tab1:
@@ -32,12 +44,23 @@ def loan_calculator():
 
     with tab2:
         st.subheader("전세자금대출 계산")
-        st.write("기본 원리금 균등 상환 로직 적용")
-        # 전세 대출 관련 로직 추가 공간
+        p = st.number_input("전세 대출금 (원)", value=200000000, step=10000000)
+        y = st.number_input("대출 기간 (년)", value=2)
+        r = st.number_input("연 금리 (%)", value=3.5, step=0.1)
+        if st.button("전세자금 계산"):
+            m_rate = (r / 100) / 12
+            months = y * 12
+            payment = p * (m_rate * (1 + m_rate) ** months) / ((1 + m_rate) ** months - 1)
+            st.metric("월 예상 이자액", f"{int(payment):,} 원")
 
     with tab3:
         st.subheader("신용/마이너스 통장 계산")
-        # 기존 마통 계산기 로직 삽입 가능
+        amount = st.number_input("사용 금액 (원)", value=10000000, step=1000000)
+        r = st.number_input("연 금리 (%)", value=5.5, step=0.1)
+        days = st.number_input("사용 일수 (일)", value=30)
+        if st.button("이자 계산"):
+            interest = amount * (r / 100) * (days / 365)
+            st.metric("예상 발생 이자", f"{int(interest):,} 원")
 
 def dsr_calculator():
     st.header("📊 DSR(총부채원리금상환비율) 계산기")
