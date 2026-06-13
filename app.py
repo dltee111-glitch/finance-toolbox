@@ -34,7 +34,7 @@ if st.session_state.page == "main":
     with col2:
         if st.button("📊 DSR 계산기", use_container_width=True):
             st.session_state.page = "dsr"; st.rerun()
-        st.caption("총부채 원리금 상환비율 확인")
+        st.caption("총부채 원리금 상환 비율 확인")
     with col3:
         if st.button("💰 청약 증거금 계산기", use_container_width=True):
             st.session_state.page = "ipo"; st.rerun()
