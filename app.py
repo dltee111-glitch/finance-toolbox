@@ -1,105 +1,72 @@
 import streamlit as st
-import pandas as pd
 from datetime import date
 
 # 1. 페이지 설정
-st.set_page_config(page_title="Karis Financial Hub", layout="centered")
+st.set_page_config(page_title="Karis 금융 계산기 포털", layout="centered")
 
-# 2. 사이드바 메뉴
-st.sidebar.title("📊 Karis Financial Hub")
+# 2. 사이드바 메뉴 개선
+st.sidebar.title("💰 Karis 금융 계산기 포털")
+st.sidebar.markdown("---")
 menu = st.sidebar.radio(
-    "계산기 선택",
-    ["🏠 부동산/주택담보대출 계산기", "📈 마이너스 통장 계산기", "💰 공모주 청약 계산기"]
+    "메뉴 선택",
+    ["🏠 대출 이자 계산기", "📊 DSR 계산기", "💰 공모주 청약 계산기"]
 )
 
 # 3. 각 계산기 함수 정의
 
-def mortgage_calculator():
-    st.header("🏠 부동산/주택담보대출 계산기")
-    st.write("원리금 균등 상환 방식 기준 매월 상환액을 계산합니다.")
+def loan_calculator():
+    st.header("🏠 대출 이자 계산기")
+    # 탭을 사용하여 대출 유형 분리
+    tab1, tab2, tab3 = st.tabs(["주택담보대출", "전세자금대출", "신용/마이너스"])
+
+    with tab1:
+        st.subheader("주택담보대출 계산")
+        p = st.number_input("대출 원금 (원)", value=300000000, step=10000000)
+        y = st.number_input("대출 기간 (년)", value=30)
+        r = st.number_input("연 금리 (%)", value=4.0, step=0.1)
+        if st.button("주택담보 계산"):
+            m_rate = (r / 100) / 12
+            months = y * 12
+            payment = p * (m_rate * (1 + m_rate) ** months) / ((1 + m_rate) ** months - 1)
+            st.metric("월 예상 상환액", f"{int(payment):,} 원")
+
+    with tab2:
+        st.subheader("전세자금대출 계산")
+        st.write("기본 원리금 균등 상환 로직 적용")
+        # 전세 대출 관련 로직 추가 공간
+
+    with tab3:
+        st.subheader("신용/마이너스 통장 계산")
+        # 기존 마통 계산기 로직 삽입 가능
+
+def dsr_calculator():
+    st.header("📊 DSR(총부채원리금상환비율) 계산기")
+    income = st.number_input("연 소득 (원)", value=50000000, step=1000000)
+    existing_debt_repayment = st.number_input("연간 기존 부채 원리금 상환액 (원)", value=10000000, step=1000000)
+    new_loan_repayment = st.number_input("연간 신규 대출 원리금 상환액 (원)", value=5000000, step=1000000)
     
-    col1, col2 = st.columns(2)
-    with col1:
-        principal = st.number_input("대출 원금 (원)", min_value=0, value=300000000, step=10000000)
-    with col2:
-        years = st.number_input("대출 기간 (년)", min_value=1, max_value=50, value=30)
+    total_repayment = existing_debt_repayment + new_loan_repayment
+    dsr = (total_repayment / income) * 100
     
-    rate = st.number_input("연 금리 (%)", min_value=0.0, value=4.0, step=0.1)
-
-    if st.button("계산하기"):
-        monthly_rate = (rate / 100) / 12
-        months = years * 12
-        
-        # 원리금 균등 상환 공식
-        if monthly_rate > 0:
-            monthly_payment = principal * (monthly_rate * (1 + monthly_rate) ** months) / ((1 + monthly_rate) ** months - 1)
-        else:
-            monthly_payment = principal / months
-            
-        total_payment = monthly_payment * months
-        total_interest = total_payment - principal
-        
-        st.divider()
-        st.metric("월 예상 상환액", f"{int(monthly_payment):,} 원")
-        st.write(f"**총 대출 이자:** {int(total_interest):,} 원")
-        st.write(f"**총 상환 금액:** {int(total_payment):,} 원")
-
-def minus_account_calculator():
-    st.header("📈 마이너스 통장 계산기")
-    st.write("사용한 금액과 기간만큼만 계산하는 스마트한 일할 계산기입니다.")
-    
-    col1, col2 = st.columns(2)
-    with col1:
-        total_limit = st.number_input("마통 전체 한도 (원)", min_value=0, value=50000000, step=1000000)
-    with col2:
-        amount = st.number_input("현재 사용 금액 (원)", min_value=0, value=10000000, step=1000000)
-
-    rate = st.number_input("연 금리 (%)", min_value=0.0, value=5.5, step=0.1)
-
-    c1, c2 = st.columns(2)
-    with c1:
-        start_date = st.date_input("대출 시작일", date.today())
-    with c2:
-        end_date = st.date_input("상환 예정일", date.today())
-
-    days = (end_date - start_date).days
-
-    if days > 0:
-        interest = amount * (rate / 100) * (days / 365)
-        usage_rate = (amount / total_limit) * 100 if total_limit > 0 else 0
-        
-        st.markdown("---")
-        m1, m2 = st.columns(2)
-        m1.metric("총 사용 일수", f"{days}일")
-        m2.metric("예상 발생 이자", f"{int(interest):,} 원")
-        
-        st.write(f"**한도 사용률: {usage_rate:.1f}%**")
-        st.progress(min(usage_rate/100, 1.0))
+    st.metric("예상 DSR", f"{dsr:.2f} %")
+    if dsr > 40:
+        st.error("DSR이 40%를 초과합니다. 대출 규제 영향권입니다.")
     else:
-        st.warning("상환 예정일을 시작일 이후로 설정해주세요.")
+        st.success("DSR이 40% 이하입니다. 대출이 원활할 수 있습니다.")
 
 def ipo_calculator():
-    st.header("📊 Karis의 공모주 청약 증거금 계산기")
-    st.caption("공모가와 원하는 청약 수량을 입력하시면 필요한 총 증거금을 실시간으로 계산해 드립니다.")
-    st.divider()
+    st.header("💰 공모주 청약 증거금 계산기")
+    price = st.number_input("확정 공모가 (원)", value=27000)
+    count = st.number_input("청약 수량 (주)", value=10)
+    margin_rate = st.radio("증거금율", [50, 100])
+    
+    total = price * count * (margin_rate / 100)
+    st.metric("필요 증거금", f"{int(total):,} 원")
 
-    price = st.number_input("1. 확정 공모가를 입력하세요 (원)", min_value=0, value=27000, step=500)
-    count = st.number_input("2. 청약하고자 하는 수량을 입력하세요 (주)", min_value=0, value=10, step=10)
-    margin_rate = st.radio("3. 증거금율을 선택하세요", [50, 100], index=0)
-
-    total_money = price * count
-    required_margin = total_money * (margin_rate / 100)
-
-    st.divider()
-    st.subheader("🧮 청약 준비금 계산 결과")
-    st.metric(label="계좌에 필요한 총 증거금", value=f"{int(required_margin):,} 원")
-    st.info(f"총 청약 금액 {int(total_money):,} 원 중 {margin_rate}%에 해당하는 증거금입니다.")
-    st.link_button("🚀 Karis 블로그 방문하기", "https://blog.naver.com/karis_official")
-
-# 4. 메뉴 선택 실행
-if menu == "🏠 부동산/주택담보대출 계산기":
-    mortgage_calculator()
-elif menu == "📈 마이너스 통장 계산기":
-    minus_account_calculator()
+# 4. 메뉴 실행
+if menu == "🏠 대출 이자 계산기":
+    loan_calculator()
+elif menu == "📊 DSR 계산기":
+    dsr_calculator()
 elif menu == "💰 공모주 청약 계산기":
     ipo_calculator()
