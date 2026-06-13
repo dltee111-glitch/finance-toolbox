@@ -30,11 +30,11 @@ if st.session_state.page == "main":
         # 버튼 텍스트를 간결하게 수정
         if st.button("📉 대출 상환 계산기", use_container_width=True):
             st.session_state.page = "loan"; st.rerun()
-        st.caption("이자 및 예상 상환액 확인")
+        st.caption("이자 및 월별 예상 상환액 확인")
     with col2:
         if st.button("📊 DSR 계산기", use_container_width=True):
             st.session_state.page = "dsr"; st.rerun()
-        st.caption("총부채원리금상환비율 확인")
+        st.caption("총부채 원리금 상환비율 확인")
     with col3:
         if st.button("💰 청약 증거금 계산기", use_container_width=True):
             st.session_state.page = "ipo"; st.rerun()
@@ -74,7 +74,7 @@ if st.session_state.page == "loan":
     show_blog_banner()
 
 elif st.session_state.page == "dsr":
-    st.header("📊 DSR(총부채원리금상환비율) 계산기")
+    st.header("📊 DSR(총부채 원리금 상환비율) 계산기")
     go_back_button()
     income = st.number_input("연 소득 (원)", value=50000000)
     existing_debt = st.number_input("기존 부채 원리금 (원)", value=10000000)
