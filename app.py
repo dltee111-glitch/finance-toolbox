@@ -27,14 +27,18 @@ if st.session_state.page == "main":
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        if st.button("📉 대출 이자 및 상환 예상 금액 계산", use_container_width=True):
+        # 버튼 텍스트를 간결하게 수정
+        if st.button("📉 대출 상환 계산기", use_container_width=True):
             st.session_state.page = "loan"; st.rerun()
+        st.caption("이자 및 예상 상환액 확인")
     with col2:
         if st.button("📊 DSR 계산기", use_container_width=True):
             st.session_state.page = "dsr"; st.rerun()
+        st.caption("총부채원리금상환비율 확인")
     with col3:
-        if st.button("💰 공모주 청약 증거금 계산기", use_container_width=True):
+        if st.button("💰 청약 증거금 계산기", use_container_width=True):
             st.session_state.page = "ipo"; st.rerun()
+        st.caption("공모주 청약 필요 금액")
             
     show_blog_banner()
 
