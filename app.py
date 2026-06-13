@@ -1,4 +1,5 @@
 import streamlit as st
+import pandas as pd
 
 # 페이지 설정
 st.set_page_config(page_title="Karis 금융 계산기 포털", layout="centered")
@@ -45,14 +46,38 @@ def go_back_button():
 if st.session_state.page == "loan":
     st.header("📉 대출 이자 계산기")
     go_back_button()
-    # (여기에 기존 대출 계산기 로직 삽입)
+    
+    amount = st.number_input("대출 원금 (원)", value=10000000, step=1000000)
+    rate = st.number_input("연 금리 (%)", value=5.0, step=0.1) / 100
+    months = st.number_input("대출 기간 (개월)", value=12, step=1)
+    
+    if st.button("상환 스케줄 계산"):
+        m_rate = rate / 12
+        monthly_payment = amount * (m_rate * (1 + m_rate) ** months) / ((1 + m_rate) ** months - 1)
+        
+        schedule = []
+        balance = amount
+        for i in range(1, months + 1):
+            interest = balance * m_rate
+            principal = monthly_payment - interest
+            balance -= principal
+            schedule.append([i, int(principal), int(interest), int(max(0, balance))])
+            
+        df = pd.DataFrame(schedule, columns=["회차", "상환 원금", "이자", "잔금"])
+        st.write("### 상환 스케줄 상세")
+        st.dataframe(df, use_container_width=True)
+        
     show_blog_banner()
 
 elif st.session_state.page == "dsr":
     st.header("📊 DSR(총부채원리금상환비율) 계산기")
     go_back_button()
     income = st.number_input("연 소득 (원)", value=50000000)
-    # ... (DSR 로직)
+    existing_debt = st.number_input("기존 부채 원리금 (원)", value=10000000)
+    new_loan = st.number_input("신규 대출 원리금 (원)", value=5000000)
+    if st.button("계산"):
+        dsr = ((existing_debt + new_loan) / income) * 100
+        st.metric("예상 DSR", f"{dsr:.2f} %")
     show_blog_banner()
 
 elif st.session_state.page == "ipo":
@@ -60,5 +85,8 @@ elif st.session_state.page == "ipo":
     go_back_button()
     price = st.number_input("확정 공모가 (원)", value=27000)
     count = st.number_input("청약 수량 (주)", value=10)
-    # ... (IPO 로직)
+    margin_rate = st.radio("증거금율", [50, 100])
+    if st.button("계산"):
+        total = price * count * (margin_rate / 100)
+        st.metric("필요 증거금", f"{int(total):,} 원")
     show_blog_banner()
