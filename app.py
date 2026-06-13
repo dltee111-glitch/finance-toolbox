@@ -27,7 +27,7 @@ if st.session_state.page == "main":
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        if st.button("📉 대출 이자 계산기", use_container_width=True):
+        if st.button("📉 대출 이자 및 상환 예상 금액 계산", use_container_width=True):
             st.session_state.page = "loan"; st.rerun()
     with col2:
         if st.button("📊 DSR 계산기", use_container_width=True):
@@ -44,7 +44,7 @@ def go_back_button():
         st.session_state.page = "main"; st.rerun()
 
 if st.session_state.page == "loan":
-    st.header("📉 대출 이자 계산기")
+    st.header("📉 대출 이자 및 상환 예상 금액 계산")
     go_back_button()
     
     amount = st.number_input("대출 원금 (원)", value=10000000, step=1000000)
