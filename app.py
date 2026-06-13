@@ -33,10 +33,31 @@ def loan_calculator():
     rate = st.number_input("연 금리 (%)", min_value=0.1, max_value=20.0, value=5.0, step=0.1)
     period = st.number_input("대출 기간 (개월)", min_value=1, max_value=360, value=12)
     method = st.selectbox("상환 방식", ["원리금 균등 상환", "원금 균등 상환"])
-    if st.button("계산하기"):
-        st.write("상세 계산 로직이 여기에 표시됩니다.")
+    if st.button("계산 실행"):
+        st.write("대출 상환 스케줄 계산 로직입니다.")
 
-# 2. 연금저축 복리 계산기
+# 2. 마이너스 통장 계산기
+def minus_account_calculator():
+    st.subheader("📈 마이너스 통장 계산기")
+    limit = st.number_input("대출 한도 (원)", value=50000000)
+    used_amount = st.number_input("사용 금액 (원)", value=1000000)
+    days = st.number_input("사용 일수 (일)", value=30)
+    interest_rate = st.number_input("연 이자율 (%)", value=6.0)
+    if st.button("계산 실행"):
+        interest = used_amount * (interest_rate / 100) * (days / 365)
+        st.metric("예상 발생 이자", f"{int(interest):,} 원")
+
+# 3. 공모주 청약 증거금 계산기
+def ipo_calculator():
+    st.subheader("💰 공모주 청약 증거금 계산기")
+    price = st.number_input("공모가 (원)", value=20000)
+    shares = st.number_input("청약 주식 수 (주)", value=100)
+    ratio = st.number_input("증거금률 (%)", value=50)
+    if st.button("계산 실행"):
+        deposit = price * shares * (ratio / 100)
+        st.metric("필요 증거금", f"{int(deposit):,} 원")
+
+# 4. 연금저축 복리 계산기
 def pension_calculator():
     st.subheader("🏦 연금저축 복리 계산기")
     col1, col2 = st.columns(2)
@@ -58,12 +79,14 @@ def pension_calculator():
 # 페이지 분기 처리
 if st.session_state.page == "대출":
     loan_calculator()
+elif st.session_state.page == "마통":
+    minus_account_calculator()
+elif st.session_state.page == "공모주":
+    ipo_calculator()
 elif st.session_state.page == "연금":
     pension_calculator()
 elif st.session_state.page == "메인":
     st.info("위 메뉴에서 원하시는 금융 계산기를 선택해 주세요.")
-else:
-    st.write(f"{st.session_state.page} 계산기는 준비 중입니다.")
 
 # 푸터
 st.markdown("---")
