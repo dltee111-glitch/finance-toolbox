@@ -16,13 +16,13 @@ if 'page' not in st.session_state:
     st.session_state.page = "메인"
 
 with col1:
-    if st.button("📉 대출"): st.session_state.page = "대출"
+    if st.button("📉 대출 이자 계산기"): st.session_state.page = "대출"
 with col2:
-    if st.button("📈 마통"): st.session_state.page = "마통"
+    if st.button("📈 마통 이자 계산기"): st.session_state.page = "마통"
 with col3:
-    if st.button("💰 공모주"): st.session_state.page = "공모주"
+    if st.button("💰 공모주 증거금 계산기"): st.session_state.page = "공모주"
 with col4:
-    if st.button("🏦 연금"): st.session_state.page = "연금"
+    if st.button("🏦 연금저축 복리 계산기"): st.session_state.page = "연금"
 
 st.markdown("---")
 
