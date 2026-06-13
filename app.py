@@ -3,25 +3,46 @@ import pandas as pd
 from datetime import date
 
 # 1. 페이지 설정
-st.set_page_config(page_title="Karis 금융 계산기 포털", layout="centered")
+st.set_page_config(page_title="Karis Financial Hub", layout="centered")
 
 # 2. 사이드바 메뉴
-st.sidebar.title("💰 Karis 금융 툴박스")
+st.sidebar.title("📊 Karis Financial Hub")
 menu = st.sidebar.radio(
     "계산기 선택",
-    ["📉 대출 이자 계산기", "📈 마이너스 통장 계산기", "💰 공모주 청약 계산기"]
+    ["🏠 부동산/주택담보대출 계산기", "📈 마이너스 통장 계산기", "💰 공모주 청약 계산기"]
 )
 
 # 3. 각 계산기 함수 정의
 
-def loan_calculator():
-    st.header("📉 대출 이자 계산기")
-    st.write("원리금/원금 균등 상환 방식을 계산합니다.")
-    # 여기에 가지고 계신 기존 대출 계산기 코드를 그대로 붙여넣으세요.
-    # 예시: 
-    # principal = st.number_input("대출 원금")
-    # rate = st.number_input("금리")
-    # ... 계산 로직 ...
+def mortgage_calculator():
+    st.header("🏠 부동산/주택담보대출 계산기")
+    st.write("원리금 균등 상환 방식 기준 매월 상환액을 계산합니다.")
+    
+    col1, col2 = st.columns(2)
+    with col1:
+        principal = st.number_input("대출 원금 (원)", min_value=0, value=300000000, step=10000000)
+    with col2:
+        years = st.number_input("대출 기간 (년)", min_value=1, max_value=50, value=30)
+    
+    rate = st.number_input("연 금리 (%)", min_value=0.0, value=4.0, step=0.1)
+
+    if st.button("계산하기"):
+        monthly_rate = (rate / 100) / 12
+        months = years * 12
+        
+        # 원리금 균등 상환 공식
+        if monthly_rate > 0:
+            monthly_payment = principal * (monthly_rate * (1 + monthly_rate) ** months) / ((1 + monthly_rate) ** months - 1)
+        else:
+            monthly_payment = principal / months
+            
+        total_payment = monthly_payment * months
+        total_interest = total_payment - principal
+        
+        st.divider()
+        st.metric("월 예상 상환액", f"{int(monthly_payment):,} 원")
+        st.write(f"**총 대출 이자:** {int(total_interest):,} 원")
+        st.write(f"**총 상환 금액:** {int(total_payment):,} 원")
 
 def minus_account_calculator():
     st.header("📈 마이너스 통장 계산기")
@@ -76,8 +97,8 @@ def ipo_calculator():
     st.link_button("🚀 Karis 블로그 방문하기", "https://blog.naver.com/karis_official")
 
 # 4. 메뉴 선택 실행
-if menu == "📉 대출 이자 계산기":
-    loan_calculator()
+if menu == "🏠 부동산/주택담보대출 계산기":
+    mortgage_calculator()
 elif menu == "📈 마이너스 통장 계산기":
     minus_account_calculator()
 elif menu == "💰 공모주 청약 계산기":
