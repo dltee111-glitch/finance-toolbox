@@ -8,7 +8,7 @@ st.title("💰 Karis 금융 계산기 포털")
 st.markdown("원하시는 계산기를 선택하여 금융 자산을 체계적으로 관리하세요.")
 st.markdown("---")
 
-# 상단 선택 카드 레이아웃
+# 상단 선택 카드 레이아웃 (텍스트를 간결하게 수정)
 col1, col2, col3, col4 = st.columns(4)
 
 # 세션 상태를 이용한 페이지 전환
@@ -16,13 +16,13 @@ if 'page' not in st.session_state:
     st.session_state.page = "메인"
 
 with col1:
-    if st.button("📉 대출 이자 계산기"): st.session_state.page = "대출"
+    if st.button("📉 대출이자"): st.session_state.page = "대출"
 with col2:
-    if st.button("📈 마통 이자 계산기"): st.session_state.page = "마통"
+    if st.button("📈 마통이자"): st.session_state.page = "마통"
 with col3:
-    if st.button("💰 공모주 증거금 계산기"): st.session_state.page = "공모주"
+    if st.button("💰 공모주"): st.session_state.page = "공모주"
 with col4:
-    if st.button("🏦 연금저축 복리 계산기"): st.session_state.page = "연금"
+    if st.button("🏦 연금복리"): st.session_state.page = "연금"
 
 st.markdown("---")
 
